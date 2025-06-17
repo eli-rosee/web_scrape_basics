@@ -25,8 +25,12 @@ class Search:
         self.scraped_tables = []
 
     def print_frames(self):
-        df_total = pd.concat(self.scraped_tables, ignore_index=True)
-        print(df_total.to_markdown())
+        if len(self.scraped_tables) > 1:
+            print(pd.concat(self.scraped_tables, ignore_index=True).to_markdown())
+        elif len(self.scraped_tables) == 1:
+            print(self.scraped_tables[0].to_markdown())
+        else:
+            print("Error. No search results found. Try again!")
 
     def scrape_link(self, search):
         html_text = requests.get(search).text
@@ -72,29 +76,37 @@ class Search:
     # passing an empty search_query will result in the default table output getting scraped
     def search_link(self, search_query):
         self.scraped_tables.clear()
-        search = Search.root + str(search_query)
-        html_text = requests.get(search).text
+        search = Search.root + "?q=" + search_query
+        links = [search]
 
+        html_text = requests.get(search).text
         soup = BeautifulSoup(html_text, 'lxml')
 
         pages = soup.find('ul', class_='pagination')
         page_nums = pages.find_all("a")
 
-        page_length = len(page_nums)
+        if len(page_nums) != 0:
+            links.clear()
+            page_length = len(page_nums)
 
-        for i in range(1, page_length + 1):
-            if i == 1:
-                search = Search.root + '?q=' + str(search_query)
-            else:
+            for i in range(1, page_length + 1):
                 search = Search.root + '?page_num=' + str(i) + '&q=' + str(search_query)
+                links.append(search)
 
-            self.scrape_link(search)
+        for link in links:
+            self.scrape_link(link)
 
 def main():
 
     search = Search()
-    search.search_link('')
-    search.print_frames()
+
+    print("\nWelcome to the Hockey Teams search tool! Browse through a database of NHL team stats since 1990 using custom searches.")
+    print("Program built by scraping the website https://www.scrapethissite.com/pages/forms/, which has an existing database.")
+
+    while True:
+        query = input("\n\nPlease input a search prompt for the hockey database! A table will be printed containing the search results of your query.\nHint: Leave field blank for an exhaustive search of the database!\n\n")
+        search.search_link(query)
+        search.print_frames()
 
 if __name__ == '__main__':
     main()
