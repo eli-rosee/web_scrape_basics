@@ -103,9 +103,10 @@ def main():
 
     print("\nWelcome to the Hockey Teams search tool! Browse through a database of NHL team stats since 1990 using custom searches.")
     print("Program built by scraping the website https://www.scrapethissite.com/pages/forms/, which has an existing database.")
+    print("Hint: Leave field blank for an exhaustive search of the database!")
 
     while True:
-        query = input("\n\nPlease input a search prompt for the hockey database! A table will be printed containing the search results of your query.\nHint: Leave field blank for an exhaustive search of the database!\n\n")
+        query = input("\n\nPlease input a search prompt for the hockey database! A table will be printed containing the search results of your query.\n\n")
         search.search_link(query)
         search.print_frames()
 
