@@ -24,6 +24,16 @@ class Search:
     def __init__(self):
         self.scraped_tables = []
 
+    def print_frames(self):
+        df_total = pd.concat(self.scraped_tables, ignore_index=True)
+        print(df_total.to_markdown())
+
+    def scrape_link(self, search):
+        html_text = requests.get(search).text
+        soup = BeautifulSoup(html_text, 'lxml')
+
+        self.table_scrape(soup)
+
     # scrapes the site for the table outputted and puts it in a pandas dataframe
     def table_scrape(self, soup):
 
@@ -53,7 +63,7 @@ class Search:
                            plus_minus[i].string.strip()])
 
         # turns the data into a pandas dataframe
-        df_hockey = pd.DataFrame(data, index=range(1, len(data) + 1), columns=Search.column_index)
+        df_hockey = pd.DataFrame(data, index=range(len(data)), columns=Search.column_index)
 
         # adds the dataframe into the class variable
         self.scraped_tables.append(df_hockey)
@@ -61,15 +71,30 @@ class Search:
     # scrapes the website for a specific search.
     # passing an empty search_query will result in the default table output getting scraped
     def search_link(self, search_query):
-        pass
+        self.scraped_tables.clear()
+        search = Search.root + str(search_query)
+        html_text = requests.get(search).text
+
+        soup = BeautifulSoup(html_text, 'lxml')
+
+        pages = soup.find('ul', class_='pagination')
+        page_nums = pages.find_all("a")
+
+        page_length = len(page_nums)
+
+        for i in range(1, page_length + 1):
+            if i == 1:
+                search = Search.root + '?q=' + str(search_query)
+            else:
+                search = Search.root + '?page_num=' + str(i) + '&q=' + str(search_query)
+
+            self.scrape_link(search)
 
 def main():
-    # table scrape test case
-    html_text = requests.get('https://www.scrapethissite.com/pages/forms/').text
-    soup = BeautifulSoup(html_text, 'lxml')
+
     search = Search()
-    search.table_scrape(soup)
-    print(search.scraped_tables[0].to_markdown())
+    search.search_link('')
+    search.print_frames()
 
 if __name__ == '__main__':
     main()
