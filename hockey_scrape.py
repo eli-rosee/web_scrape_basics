@@ -26,12 +26,14 @@ class Search:
         self.scraped_tables = []
 
     def print_frames(self):
+        print('\n')
         if len(self.scraped_tables) > 1:
             print(pd.concat(self.scraped_tables, ignore_index=True).to_markdown())
         elif len(self.scraped_tables) == 1:
             print(self.scraped_tables[0].to_markdown())
         else:
             print("Error. No search results found. Try again!")
+        print('\n')
 
     def scrape_link(self, search):
         html_text = requests.get(search).text
@@ -94,7 +96,8 @@ class Search:
                 search = Search.root + '?page_num=' + str(i) + '&q=' + str(search_query)
                 links.append(search)
 
-        for link in links:
+        for i, link in enumerate(links, 1):
+            print('Scraping page ' + str(i) + '/' + str(len(links)))
             self.scrape_link(link)
 
 def main():
@@ -106,7 +109,11 @@ def main():
     print("Hint: Leave field blank for an exhaustive search of the database!")
 
     while True:
-        query = input("\n\nPlease input a search prompt for the hockey database! A table will be printed containing the search results of your query.\n\n")
+        query = input("\nPlease input a search prompt for the hockey database! A table will be printed containing the search results of your query.\n\n")
+        if not query:
+            print("\nSuccessfully entered empty query! Scraping website...\n")
+        else:
+            print(f'\nSuccessfully inputted query={query}! Scraping website...\n')
         search.search_link(query)
         search.print_frames()
 
