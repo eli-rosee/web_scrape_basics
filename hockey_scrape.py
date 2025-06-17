@@ -3,7 +3,6 @@
 # imports
 import requests
 import pandas as pd
-import numpy as np
 from bs4 import BeautifulSoup
 
 # defining a class to be able to scrape and search the website
