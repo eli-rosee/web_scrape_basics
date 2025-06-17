@@ -1,3 +1,5 @@
+# This program taught me the setup of a basic web scrape
+
 # imports
 import requests
 from bs4 import BeautifulSoup
