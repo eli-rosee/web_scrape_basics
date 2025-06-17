@@ -1,3 +1,5 @@
+# This program taught me how to deal with pagination and searches while web scraping
+
 # imports
 import requests
 import pandas as pd
