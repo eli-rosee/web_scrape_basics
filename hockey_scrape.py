@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 class Scrape:
 
     # static variable listing the column names
-    column_index = ['Team Name ',
+    column_index = ['Team Name',
                     'Year',
                     'Wins',
                     'Losses',
