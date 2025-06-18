@@ -103,7 +103,7 @@ class Scrape:
             page_length = len(page_nums)
 
             # iterates over all pages detected and stores every link in the links list
-            for i in range(1, page_length + 1):
+            for i in range(1, page_length):
                 search = Scrape.root + '?page_num=' + str(i) + '&q=' + str(search_query)
                 links.append(search)
 
